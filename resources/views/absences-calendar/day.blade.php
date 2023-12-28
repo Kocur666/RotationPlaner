@@ -32,7 +32,7 @@
             {{-- Absences --}}
 
 
-            <div class="p-1 my-1 row overflow-y-auto">
+            <div class="row overflow-y-auto">
                 <div class="grid grid-cols-1 grid-flow-row gap-2" style="grid-template-columns: repeat(1, minmax(0, 1fr)); grid-auto-flow: row; gap: 0.5rem; ">
                     @foreach($absences as $absence)
                         <div>

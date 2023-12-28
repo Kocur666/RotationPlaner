@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use App\Models\Areas;
 use App\Models\Absences;
 use App\Models\CalendarUsers;
@@ -28,6 +29,7 @@ class AbsencesCalendar extends LivewireCalendar
     public $dayView;
     public $eventView;
     public $areaView;
+    public $absenceView;
     public $dayOfWeekView;
 
     public $dragAndDropClasses;
@@ -129,8 +131,8 @@ class AbsencesCalendar extends LivewireCalendar
             });
     }
 
-    public function  onAbsenceClick($absence, $year, $month, $day){
-        $currentAbsence = Absences::where('id', $absence['id'])->delete();
+    public function  onAbsenceClick($absenceId){
+        $currentAbsence = Absences::where('id', $absenceId)->delete();
         // dd($currentAbsence);
     }
 
@@ -141,7 +143,7 @@ class AbsencesCalendar extends LivewireCalendar
 
         return view($this->calendarView)
             ->with([
-                'componentId' => $this->id,
+                'componentId' => $this->__id,
                 'monthGrid' => $this->monthGrid(),
                 'events' => $events,
                 'absences' => $absences,

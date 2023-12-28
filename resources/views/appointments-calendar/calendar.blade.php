@@ -48,3 +48,19 @@
         @includeIf($afterCalendarView)
     </div>
 </div>
+<script>
+document.addEventListener('livewire:init', () => {
+    Livewire.on('swal', (event) => {
+        const data=event
+        swal.fire({
+            icon:data[0]['icon'],
+            title:data[0]['title'],
+            text:data[0]['text'],
+            timer:2000,
+            timerProgressBar:true,
+        })
+    });
+});
+
+
+</script>

@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use App\Models\Areas;
 use App\Models\Absences;
 use App\Models\CalendarUsers;
@@ -28,6 +29,7 @@ class AppointmentsCalendar extends Component
     public $dayView;
     public $eventView;
     public $areaView;
+    public $absenceView;
     public $dayOfWeekView;
 
     public $dragAndDropClasses;
@@ -68,6 +70,7 @@ class AppointmentsCalendar extends Component
                           $eventClickEnabled = true,
                           $extras = [])
     {
+
         $this->weekStartsAt = $weekStartsAt ?? Carbon::MONDAY;
         $this->weekEndsAt = $this->weekStartsAt == Carbon::MONDAY
             ? Carbon::SUNDAY
@@ -263,7 +266,33 @@ class AppointmentsCalendar extends Component
 
     public function onEventClick($eventId)
     {
-        //
+        $currentEvent = Events::where('id', $eventId)->delete();
+    }
+    public function onDayCopyClick($day)
+    {
+        // dd(Carbon::parse($day)->format('Y-m-j'));
+        $EventsToCopy = Events::where('date', Carbon::parse($day)->format('Y-m-j'))->get();
+        foreach($EventsToCopy as $event){
+            $date = Carbon::parse($event->date)->addDay();
+            $dateDay = $date->dayOfWeek;
+            if($dateDay > 5 or $dateDay < 1){
+                $date->addDay();
+                $dateDay = $date->dayOfWeek;
+                if($dateDay > 5 or $dateDay < 1){
+                    $date->addDay();
+                }
+            }
+            // dd($event);
+            $newEvent = Events::create(['title'=> $event->title, 'person' => $event->person, 'date' => $date ]);
+            // dd($date);
+        }
+        $this->dispatch('swal',[
+            'title'=>'Success!',
+            'text'=>'Data saved for next WORKING day',
+            'icon'=>'success',
+        ]);
+        // dd($EventsToCopy);
+        // $currentEvent = Events::where('id', $eventId)->delete();
     }
 
     public function onEventDropped($eventId, $year, $month, $day)
@@ -318,7 +347,7 @@ class AppointmentsCalendar extends Component
 
         return view($this->calendarView)
             ->with([
-                'componentId' => $this->id,
+                'componentId' => $this->__id,
                 'monthGrid' => $this->monthGrid(),
                 'events' => $events,
                 'areas' => $areas,
